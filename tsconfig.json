@@ -1,0 +1,9 @@
+{
+  "extends": "@adonisjs/tsconfig/tsconfig.app.json",
+  "exclude": ["node_modules", "build", "dist"],
+  "include": ["**/*.ts"],
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "./build"
+  }
+}

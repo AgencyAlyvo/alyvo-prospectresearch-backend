@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: staging-seatyrants-website-backend-worker-deployment
+  namespace: staging-seatyrants-website-backend
+  labels:
+    app: staging-seatyrants-website-backend-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: staging-seatyrants-website-backend-worker
+  template:
+    metadata:
+      labels:
+        app: staging-seatyrants-website-backend-worker
+    spec:
+      initContainers:
+        - name: wait-web-ready
+          image: curlimages/curl:8.10.1
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              until curl -fsS http://staging-seatyrants-website-backend-service:3333/; do
+                echo "waiting for web service readiness..."
+                sleep 3
+              done
+      containers:
+        - name: staging-seatyrants-website-backend-worker
+          image: corentin35/seatyrants-website-backend:staging-${TAG_VERSION}
+          imagePullPolicy: Always
+          command: ['npm', 'run', 'queue:work']
+          env:
+            - name: PORT
+              value: '3333'
+          resources:
+            requests:
+              cpu: '50m'
+              memory: '128Mi'
+            limits:
+              cpu: '100m'
+              memory: '256Mi'
+      imagePullSecrets:
+        - name: regcred
