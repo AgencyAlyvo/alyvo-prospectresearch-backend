@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: staging-seatyrants-website-backend-service
+  namespace: staging-seatyrants-website-backend
+spec:
+  ports:
+    - port: 3333
+      targetPort: 3333
+  selector:
+    app: staging-seatyrants-website-backend
