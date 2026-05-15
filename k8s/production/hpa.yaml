@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: prod-seatyrants-website-backend-hpa
+  namespace: prod-seatyrants-website-backend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: prod-seatyrants-website-backend-deployment
+  minReplicas: 3
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80

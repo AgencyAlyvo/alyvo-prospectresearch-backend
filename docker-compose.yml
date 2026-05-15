@@ -1,0 +1,76 @@
+services:
+  alovy_starterkit_backend_adonisjs:
+    container_name: alovy_starterkit_backend_adonisjs
+    image: alovy/starterkit-backend:develop
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    ports:
+      - '3500:3500'
+    depends_on:
+      alovy_starterkit_database_mariadb:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "fetch(''http://127.0.0.1:3500/'').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"',
+        ]
+      start_period: 120s
+      interval: 15s
+      timeout: 5s
+      retries: 12
+    networks:
+      - app-network
+
+  alovy_starterkit_database_mariadb:
+    container_name: alovy_starterkit_database_mariadb
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: alovy_starterkit_develop
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+    ports:
+      - '3307:3306'
+    volumes:
+      - database_data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', '/usr/local/bin/healthcheck.sh', '--innodb_initialized']
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  phpmyadmin_alovy_starterkit:
+    container_name: phpmyadmin_alovy_starterkit
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: alovy_starterkit_database_mariadb
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - '7090:80'
+    depends_on:
+      alovy_starterkit_database_mariadb:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  database_data:
+  node_modules:
