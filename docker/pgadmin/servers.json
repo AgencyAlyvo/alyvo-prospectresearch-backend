@@ -1,0 +1,15 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "ProspectResearch PostgreSQL",
+      "Group": "Servers",
+      "Host": "alovy_prospectresearch_database_postgresql",
+      "Port": 5432,
+      "MaintenanceDB": "alovy_prospectresearch_develop",
+      "Username": "testuser",
+      "SSLMode": "prefer",
+      "PasswordExecCommand": "echo 'testpassword'",
+      "PasswordExecExpiration": 0
+    }
+  }
+}
