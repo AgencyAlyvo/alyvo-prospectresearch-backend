@@ -1,24 +1,9 @@
 import type { SignInPayload } from '#types/payload/sign_in_payload'
 import type { SignUpPayload } from '#types/payload/sign_up_payload'
+import EmailAlreadyUsedException from '#exceptions/email_already_used_exception'
 import User from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
-import { Exception } from '@adonisjs/core/exceptions'
 import type { AccessToken } from '@adonisjs/auth/access_tokens'
-
-/**
- * Exception levee quand un email est deja associe a un compte.
- */
-class EmailAlreadyUsedException extends Exception {
-  public static status: number = 409
-  public static code: string = 'E_EMAIL_ALREADY_USED'
-
-  /**
-   * Cree l'exception de conflit email.
-   */
-  constructor() {
-    super('Email already used')
-  }
-}
 
 /**
  * Service metier pour l'authentification API.
