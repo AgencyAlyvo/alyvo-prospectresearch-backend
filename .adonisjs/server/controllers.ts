@@ -6,4 +6,8 @@
 export const controllers = {
   Auth: () => import('#controllers/auth_controller'),
   Health: () => import('#controllers/health_controller'),
+  LinkedinProspects: () => import('#controllers/linkedin_prospects_controller'),
+  LinkedinStats: () => import('#controllers/linkedin_stats_controller'),
+  UserSettings: () => import('#controllers/user_settings_controller'),
+  WeeklyObjectives: () => import('#controllers/weekly_objectives_controller'),
 }

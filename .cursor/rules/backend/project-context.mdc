@@ -1,0 +1,63 @@
+---
+description: Regles globales reutilisables pour backend TypeScript AdonisJS
+alwaysApply: true
+---
+
+# Backend TypeScript / AdonisJS
+
+Ces instructions definissent un style backend reutilisable sur les projets TypeScript bases sur AdonisJS.
+
+## Stack par defaut
+
+- Runtime: Node.js moderne, selon la version definie dans `package.json` ou `.nvmrc`.
+- Langage: TypeScript strict en ESM.
+- Framework backend: AdonisJS v7.
+- ORM: Lucid.
+- Validation: VineJS.
+- Tests: Japa quand disponible.
+- Base de donnees: PostgreSQL sauf indication contraire du projet.
+- Package manager: npm sauf indication contraire du projet.
+
+## Regles globales
+
+- Lire d'abord le code existant avant de proposer une nouvelle structure.
+- Suivre les conventions locales du repo quand elles sont plus precises que cette regle.
+- Ne jamais utiliser `any`.
+- Utiliser `import type` pour les imports purement type.
+- Ajouter des types de retour explicites aux fonctions, methodes, callbacks et helpers exportes.
+- Garder `public`, `private` et `protected` explicites dans les classes.
+- Preferer `async` / `await` a `.then()`.
+- Respecter Prettier, ESLint et TypeScript configures dans le repo.
+- Ne pas introduire un nouvel ORM, une nouvelle lib de validation ou un nouveau format de reponse sans demande explicite.
+- Ne pas modifier les fichiers generes a la main.
+
+## Priorites de conception
+
+1. Correction metier.
+2. Typage strict.
+3. Respect de l'architecture existante.
+4. Simplicite.
+5. Tests proportionnes au risque.
+
+## Imports
+
+Utiliser les aliases du projet quand ils existent:
+
+```ts
+import UserService from '#services/user_service'
+import User from '#models/user'
+import type { CreateUserPayload } from '#types/payload/users/create_user_payload'
+```
+
+Eviter les chemins relatifs profonds entre dossiers applicatifs:
+
+```ts
+import UserService from '../../services/user_service.js'
+```
+
+## Scripts et verification
+
+- Utiliser les scripts declares dans `package.json`.
+- Pour un changement backend, lancer le : lint:ts.
+- Pour un changement metier, ajouter ou adapter les tests pertinents.
+- Pour une route ou un contrat API modifie, verifier les types cote client si un frontend consomme l'API.

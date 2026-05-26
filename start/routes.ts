@@ -10,6 +10,7 @@ import './routes/auth.js'
 /**
  * Routes métiers
  */
+import './routes/linkedin.js'
 
 /**
  * Cette route est utilisée pour tester le fonctionnement de base de l'application.

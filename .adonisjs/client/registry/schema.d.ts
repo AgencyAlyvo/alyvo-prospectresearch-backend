@@ -55,4 +55,172 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['logout']>>>
     }
   }
+  'linkedin_prospects.list_linkedin_prospects': {
+    methods: ["GET","HEAD"]
+    pattern: '/linkedin-prospects'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: ExtractQueryForGet<InferInput<(typeof import('#validators/linkedin/linkedin_prospect_validator').listLinkedinProspectsValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['listLinkedinProspects']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['listLinkedinProspects']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'linkedin_prospects.list_weekly_linkedin_prospects': {
+    methods: ["GET","HEAD"]
+    pattern: '/linkedin-prospects/weekly'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['listWeeklyLinkedinProspects']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['listWeeklyLinkedinProspects']>>>
+    }
+  }
+  'linkedin_prospects.list_due_linkedin_relances': {
+    methods: ["GET","HEAD"]
+    pattern: '/linkedin-prospects/due-relances'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['listDueLinkedinRelances']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['listDueLinkedinRelances']>>>
+    }
+  }
+  'linkedin_prospects.enrich_linkedin_prospect': {
+    methods: ["POST"]
+    pattern: '/linkedin-prospects/enrich'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/linkedin/linkedin_prospect_validator').enrichLinkedinProspectValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/linkedin/linkedin_prospect_validator').enrichLinkedinProspectValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['enrichLinkedinProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['enrichLinkedinProspect']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'linkedin_prospects.get_linkedin_prospect': {
+    methods: ["GET","HEAD"]
+    pattern: '/linkedin-prospects/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['getLinkedinProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['getLinkedinProspect']>>>
+    }
+  }
+  'linkedin_prospects.create_linkedin_prospect': {
+    methods: ["POST"]
+    pattern: '/linkedin-prospects'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/linkedin/linkedin_prospect_validator').createLinkedinProspectValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/linkedin/linkedin_prospect_validator').createLinkedinProspectValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['createLinkedinProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['createLinkedinProspect']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'linkedin_prospects.update_linkedin_prospect': {
+    methods: ["PATCH"]
+    pattern: '/linkedin-prospects/:id'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/linkedin/linkedin_prospect_validator').updateLinkedinProspectValidator)>>
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/linkedin/linkedin_prospect_validator').updateLinkedinProspectValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['updateLinkedinProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['updateLinkedinProspect']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'linkedin_prospects.refresh_linkedin_prospect': {
+    methods: ["POST"]
+    pattern: '/linkedin-prospects/:id/refresh'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['refreshLinkedinProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['refreshLinkedinProspect']>>>
+    }
+  }
+  'linkedin_prospects.delete_linkedin_prospect': {
+    methods: ["DELETE"]
+    pattern: '/linkedin-prospects/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['deleteLinkedinProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['deleteLinkedinProspect']>>>
+    }
+  }
+  'linkedin_prospects.mark_linkedin_prospect_action': {
+    methods: ["POST"]
+    pattern: '/linkedin-prospects/:id/actions/:action_type'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { id: ParamValue; action_type: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['markLinkedinProspectAction']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['markLinkedinProspectAction']>>>
+    }
+  }
+  'linkedin_stats.get_linkedin_stats': {
+    methods: ["GET","HEAD"]
+    pattern: '/stats/linkedin'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: ExtractQueryForGet<InferInput<(typeof import('#validators/stats/linkedin_stats_validator').linkedinStatsValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_stats_controller').default['getLinkedinStats']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_stats_controller').default['getLinkedinStats']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'weekly_objectives.get_current_weekly_objective': {
+    methods: ["GET","HEAD"]
+    pattern: '/weekly-objectives/current'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/weekly_objectives_controller').default['getCurrentWeeklyObjective']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/weekly_objectives_controller').default['getCurrentWeeklyObjective']>>>
+    }
+  }
+  'user_settings.get_user_settings': {
+    methods: ["GET","HEAD"]
+    pattern: '/settings'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/user_settings_controller').default['getUserSettings']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/user_settings_controller').default['getUserSettings']>>>
+    }
+  }
+  'user_settings.update_user_settings': {
+    methods: ["PUT"]
+    pattern: '/settings'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/settings/user_settings_validator').updateUserSettingsValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/settings/user_settings_validator').updateUserSettingsValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/user_settings_controller').default['updateUserSettings']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/user_settings_controller').default['updateUserSettings']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
 }

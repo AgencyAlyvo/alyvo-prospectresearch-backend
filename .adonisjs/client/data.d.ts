@@ -6,10 +6,30 @@
 /// <reference path="./manifest.d.ts" />
 import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
 import type AuthTokenTransformer from '#transformers/auth_token_transformer'
+import type LinkedinProspectTransformer from '#transformers/linkedin_prospect_transformer'
+import type ProspectActionTransformer from '#transformers/prospect_action_transformer'
+import type UserSettingsTransformer from '#transformers/user_settings_transformer'
+import type WeeklyObjectiveTransformer from '#transformers/weekly_objective_transformer'
 
 export namespace Data {
   export type AuthToken = InferData<AuthTokenTransformer>
   export namespace AuthToken {
     export type Variants = InferVariants<AuthTokenTransformer>
+  }
+  export type LinkedinProspect = InferData<LinkedinProspectTransformer>
+  export namespace LinkedinProspect {
+    export type Variants = InferVariants<LinkedinProspectTransformer>
+  }
+  export type ProspectAction = InferData<ProspectActionTransformer>
+  export namespace ProspectAction {
+    export type Variants = InferVariants<ProspectActionTransformer>
+  }
+  export type UserSettings = InferData<UserSettingsTransformer>
+  export namespace UserSettings {
+    export type Variants = InferVariants<UserSettingsTransformer>
+  }
+  export type WeeklyObjective = InferData<WeeklyObjectiveTransformer>
+  export namespace WeeklyObjective {
+    export type Variants = InferVariants<WeeklyObjectiveTransformer>
   }
 }

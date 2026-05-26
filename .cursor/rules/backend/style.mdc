@@ -1,0 +1,127 @@
+---
+description: Style backend reutilisable pour TypeScript, nommage, JSDoc, services, controllers, erreurs et tests
+globs: app/**/*.ts,start/**/*.ts,commands/**/*.ts,providers/**/*.ts,tests/**/*.ts
+alwaysApply: false
+---
+
+# Style Backend
+
+## TypeScript
+
+- TypeScript strict.
+- Pas de `any`.
+- Utiliser `unknown` quand une entree externe est inconnue, puis la valider.
+- Utiliser `import type` pour les types.
+- Type de retour explicite partout.
+- Callbacks types explicitement quand l'inference devient floue.
+- Preferer `type` pour les contrats de donnees.
+- Garder les enums avec valeurs explicites.
+- Utiliser `readonly` pour les constantes de classe et valeurs non reassignees.
+
+Exemple:
+
+```ts
+const items: UserResponse[] = users.map(
+  (user: User): UserResponse => new UserTransformer(user).toObject(),
+)
+```
+
+## Ordre des imports
+
+Ordre recommande:
+
+1. Librairies externes.
+2. Imports applicatifs runtime.
+3. Imports `type`.
+
+Exemple:
+
+```ts
+import { DateTime } from 'luxon'
+import User from '#models/user'
+import UserNotFoundException from '#exceptions/user_not_found_exception'
+import type { CreateUserPayload } from '#types/payload/users/create_user_payload'
+```
+
+## Nommage
+
+- Fichiers backend: `snake_case`, par exemple `user_service.ts`.
+- Classes: `PascalCase`, par exemple `UserService`.
+- Methodes et variables: `camelCase`.
+- Controllers: `ResourceController`.
+- Services: `ResourceService`.
+- Transformers: `ResourceTransformer`.
+- Exceptions: `SomethingException`.
+- Payloads: `CreateResourcePayload`, `UpdateResourcePayload`.
+- Queries: `ListResourcesQuery`.
+- Responses: `ResourceResponse`, `ResourceSummaryResponse`, `ResourceFullResponse`.
+
+## JSDoc
+
+Ajouter JSDoc sur:
+
+- classes exportees;
+- types exportes;
+- methodes publiques;
+- validators exportes;
+- helpers prives complexes;
+- actions de controller.
+
+Bon:
+
+```ts
+/**
+ * Charge une ressource appartenant a l'utilisateur courant.
+ * @param {number} id - Identifiant de la ressource.
+ * @param {User} user - Utilisateur authentifie.
+ * @returns {Promise<Resource>} Ressource chargee.
+ */
+```
+
+Eviter les commentaires qui repetent le code sans apporter d'intention.
+
+## Controllers
+
+Bon:
+
+```ts
+const payload: UpdateUserPayload = (await request.validateUsing(updateUserValidator)) as UpdateUserPayload
+const user: User = await UserService.updateUser(Number(params.id), payload, auth.user!)
+return serialize(new UserTransformer(user).toObject())
+```
+
+Mauvais:
+
+```ts
+const user = await User.find(params.id)
+user.merge(request.body())
+return user
+```
+
+## Services
+
+Dans les services:
+
+- declarer les variables intermediaires quand elles clarifient le type;
+- lever des exceptions metier pour les cas attendus;
+- garder les helpers prives proches de leur usage;
+- ne pas melanger reponse HTTP et logique metier.
+
+## Erreurs
+
+- Ne pas throw de string.
+- Utiliser une exception custom pour une erreur attendue.
+- Garder les messages exploitables par le frontend.
+- Garder les codes stables si l'UI ou un client API peut les utiliser.
+
+## Tests
+
+Ajouter des tests quand:
+
+- une regle metier change;
+- une validation change;
+- une route change son contrat;
+- une exception est ajoutee;
+- une correction evite une regression.
+
+Ne pas ajouter de tests decoratifs sans assertion utile.

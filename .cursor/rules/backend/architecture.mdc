@@ -1,0 +1,154 @@
+---
+description: Architecture backend reutilisable pour routes, controllers, services, validators, models, transformers, exceptions et tests
+globs: app/**/*.ts,start/**/*.ts,config/**/*.ts,database/**/*.ts,commands/**/*.ts,providers/**/*.ts,tests/**/*.ts
+alwaysApply: false
+---
+
+# Architecture Backend
+
+## Flux recommande
+
+Pour une feature API, respecter ce flux:
+
+1. Route dans un fichier de routes.
+2. Controller HTTP.
+3. Validator VineJS.
+4. Service metier.
+5. Model Lucid.
+6. Transformer ou presenter de reponse.
+7. Types de payload et response.
+8. Exception metier si l'erreur est attendue.
+
+Ne pas court-circuiter ce flux sans raison claire.
+
+## Routes
+
+Les routes doivent:
+
+- etre groupees par domaine ou ressource;
+- rester declaratives;
+- appliquer les middlewares necessaires;
+- ne pas contenir de logique metier.
+
+Exemple:
+
+```ts
+const UsersController = () => import('#controllers/users_controller')
+
+router
+  .group((): void => {
+    router.get('/users', [UsersController, 'listUsers'])
+    router.post('/users', [UsersController, 'createUser'])
+  })
+  .use(middleware.auth({ guards: ['api'] }))
+```
+
+## Controllers
+
+Un controller doit:
+
+- lire `params`, `request`, `auth`, `response` et `serialize` depuis `HttpContext`;
+- valider body/query avec VineJS;
+- convertir les params simples (`Number(params.id)` par exemple);
+- appeler un service;
+- transformer la sortie;
+- retourner une reponse claire et stable.
+
+Un controller ne doit pas:
+
+- contenir des requetes Lucid complexes;
+- porter les regles metier;
+- faire de la deduplication;
+- appeler directement une integration externe;
+- retourner directement des models Lucid;
+- manipuler des contrats non types.
+
+Exemple:
+
+```ts
+public async createUser({ request, auth, serialize }: HttpContext): Promise<unknown> {
+  const payload: CreateUserPayload = (await request.validateUsing(createUserValidator)) as CreateUserPayload
+  const user: User = await UserService.createUser(payload, auth.user!)
+  return serialize(new UserTransformer(user).toObject())
+}
+```
+
+## Services
+
+Les services contiennent la logique metier.
+
+Ils doivent gerer:
+
+- les requetes Lucid complexes;
+- les invariants metier;
+- les transitions d'etat;
+- la deduplication;
+- les appels a d'autres services;
+- les integrations externes;
+- les exceptions metier attendues.
+
+Regles:
+
+- Garder les services sans dependance HTTP directe quand c'est possible.
+- Ne pas retourner une forme API si un transformer existe.
+- Garder les helpers prives pour clarifier les etapes internes.
+- Toujours proteger les ressources liees a un utilisateur ou a une organisation par un scope explicite.
+
+## Validators
+
+Les validators doivent:
+
+- valider tout body ou query externe;
+- utiliser VineJS;
+- etre nommes selon l'action (`createXValidator`, `updateXValidator`, `listXValidator`);
+- garder les champs optionnels/nullables explicites;
+- valider les enums depuis les valeurs de l'enum;
+- eviter de faire confiance au frontend.
+
+## Models Lucid
+
+Les models doivent:
+
+- representer la persistance;
+- declarer les relations;
+- contenir les hooks de normalisation simples;
+- eviter d'embarquer de grosses regles metier.
+
+Si le projet genere des schemas Lucid, ne pas modifier le fichier genere directement.
+
+## Transformers / Presenters
+
+Les transformers doivent:
+
+- produire les objets de reponse API;
+- convertir les dates en chaines stables;
+- convertir les valeurs persistantes vers le type attendu par le contrat;
+- separer les formes `summary`, `full`, `list` si necessaire.
+
+Ils ne doivent pas faire de requetes ou modifier les models.
+
+## Types
+
+Regles:
+
+- Payloads et query params dans un dossier de types/payload.
+- Reponses API dans un dossier de types/response.
+- Types nommes et explicites pour les contrats exposes.
+- Synchroniser ces types avec les clients consommateurs de l'API.
+
+## Exceptions
+
+Utiliser une exception custom quand une erreur attendue doit avoir un statut, un code ou un message stable.
+
+Ne pas throw de string.
+
+## Tests
+
+Ajouter des tests pour:
+
+- validation critique;
+- auth et permissions;
+- transitions d'etat;
+- deduplication;
+- erreurs metier;
+- contrats API importants.

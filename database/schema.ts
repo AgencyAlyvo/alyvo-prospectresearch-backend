@@ -32,6 +32,157 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class LinkedinProspectSchema extends BaseModel {
+  static $columns = ['addedAtWeek', 'city', 'company', 'companyDescription', 'companyEmployeeCountRange', 'companyLinkedinUrl', 'companyTagline', 'companyType', 'connectionsCount', 'country', 'createdAt', 'dealWon', 'discoveryCallAt', 'discoveryCallDone', 'email', 'firstName', 'followerCount', 'hiring', 'id', 'identifiedNeed', 'industry', 'invitationAcceptedAt', 'invitationSentAt', 'lastName', 'linkedinUrl', 'lossReason', 'message1SentAt', 'nextAction', 'nextActionAt', 'openToWork', 'phone', 'position', 'positiveReply', 'profileHeadline', 'proposalAmount', 'proposalSentAt', 'region', 'relance1At', 'relance2At', 'relance3At', 'relancesCount', 'repliedAt', 'salesCallAt', 'salesCallDone', 'signedAmount', 'signedAt', 'status', 'updatedAt', 'userId', 'websiteUrl'] as const
+  $columns = LinkedinProspectSchema.$columns
+  @column()
+  declare addedAtWeek: string | null
+  @column()
+  declare city: string | null
+  @column()
+  declare company: string | null
+  @column()
+  declare companyDescription: string | null
+  @column()
+  declare companyEmployeeCountRange: string | null
+  @column()
+  declare companyLinkedinUrl: string | null
+  @column()
+  declare companyTagline: string | null
+  @column()
+  declare companyType: string | null
+  @column()
+  declare connectionsCount: number | null
+  @column()
+  declare country: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare dealWon: boolean
+  @column.dateTime()
+  declare discoveryCallAt: DateTime | null
+  @column()
+  declare discoveryCallDone: boolean
+  @column()
+  declare email: string | null
+  @column()
+  declare firstName: string
+  @column()
+  declare followerCount: number | null
+  @column()
+  declare hiring: boolean | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare identifiedNeed: string | null
+  @column()
+  declare industry: string | null
+  @column.dateTime()
+  declare invitationAcceptedAt: DateTime | null
+  @column.dateTime()
+  declare invitationSentAt: DateTime | null
+  @column()
+  declare lastName: string
+  @column()
+  declare linkedinUrl: string | null
+  @column()
+  declare lossReason: string | null
+  @column.dateTime()
+  declare message1SentAt: DateTime | null
+  @column()
+  declare nextAction: string | null
+  @column.date()
+  declare nextActionAt: DateTime | null
+  @column()
+  declare openToWork: boolean | null
+  @column()
+  declare phone: string | null
+  @column()
+  declare position: string | null
+  @column()
+  declare positiveReply: boolean
+  @column()
+  declare profileHeadline: string | null
+  @column()
+  declare proposalAmount: string | null
+  @column.dateTime()
+  declare proposalSentAt: DateTime | null
+  @column()
+  declare region: string | null
+  @column.dateTime()
+  declare relance1At: DateTime | null
+  @column.dateTime()
+  declare relance2At: DateTime | null
+  @column.dateTime()
+  declare relance3At: DateTime | null
+  @column()
+  declare relancesCount: number
+  @column.dateTime()
+  declare repliedAt: DateTime | null
+  @column.dateTime()
+  declare salesCallAt: DateTime | null
+  @column()
+  declare salesCallDone: boolean
+  @column()
+  declare signedAmount: string | null
+  @column.dateTime()
+  declare signedAt: DateTime | null
+  @column()
+  declare status: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+  @column()
+  declare websiteUrl: string | null
+}
+
+export class ProspectActionSchema extends BaseModel {
+  static $columns = ['actionType', 'channel', 'content', 'createdAt', 'id', 'occurredAt', 'prospectableId', 'prospectableType', 'updatedAt', 'userId'] as const
+  $columns = ProspectActionSchema.$columns
+  @column()
+  declare actionType: string
+  @column()
+  declare channel: string
+  @column()
+  declare content: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime()
+  declare occurredAt: DateTime
+  @column()
+  declare prospectableId: number
+  @column()
+  declare prospectableType: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
+export class UserSettingSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'maxInvitesPerWeek', 'relance1DelayDays', 'relance2DelayDays', 'relance3DelayDays', 'updatedAt', 'userId'] as const
+  $columns = UserSettingSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare maxInvitesPerWeek: number
+  @column()
+  declare relance1DelayDays: number
+  @column()
+  declare relance2DelayDays: number
+  @column()
+  declare relance3DelayDays: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
 export class UserSchema extends BaseModel {
   static $columns = ['createdAt', 'email', 'id', 'password', 'updatedAt'] as const
   $columns = UserSchema.$columns
@@ -45,4 +196,23 @@ export class UserSchema extends BaseModel {
   declare password: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+}
+
+export class WeeklyObjectiveSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'invitesSent', 'invitesTarget', 'updatedAt', 'userId', 'week'] as const
+  $columns = WeeklyObjectiveSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare invitesSent: number
+  @column()
+  declare invitesTarget: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+  @column()
+  declare week: string
 }

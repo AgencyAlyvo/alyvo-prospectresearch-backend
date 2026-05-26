@@ -30,4 +30,6 @@ export default await Env.create(new URL('../', import.meta.url), {
   SESSION_DRIVER: Env.schema.enum(['cookie', 'database', 'memory'] as const),
   API_USER_TOKEN_EXPIRATION: Env.schema.string(),
   API_USER_TOKEN_SECRET_LENGTH: Env.schema.number(),
+  N8N_LINKEDIN_ENRICHMENT_WEBHOOK_URL: Env.schema.string(),
+  N8N_LINKEDIN_ENRICHMENT_WEBHOOK_HEADER_SECRET: Env.schema.string(),
 })
