@@ -23,8 +23,7 @@ export type CreateLocalBusinessProspectPayload = {
   email?: string | null
   emailSource?: LocalBusinessEmailSource | null
   website?: string | null
-  facebookUrl?: string | null
-  instagramUrl?: string | null
+  pagesJaunesUrl?: string | null
   openingHours?: string | null
   contactChannel?: LocalBusinessContactChannel | null
   notes?: string | null

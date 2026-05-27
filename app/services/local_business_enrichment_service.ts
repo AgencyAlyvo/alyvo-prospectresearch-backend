@@ -9,8 +9,6 @@ export type LocalBusinessEnrichmentResponse = {
   email?: string | null
   emailSource?: string | null
   phone?: string | null
-  facebookUrl?: string | null
-  instagramUrl?: string | null
   seoScore?: number | null
   performanceScore?: number | null
   accessibilityScore?: number | null
@@ -28,8 +26,7 @@ type N8nPayload = Record<string, unknown>
  * Le workflow n8n est cense :
  *   1. Appeler Google PageSpeed Insights (si website) -> scores Lighthouse
  *   2. Scraper /contact /about /mentions-legales -> extraire email mailto
- *   3. Scraper la page Facebook publique (si facebookUrl) -> email visible
- *   4. Retourner les champs detectes
+ *   3. Retourner les champs detectes
  */
 export default class LocalBusinessEnrichmentService {
   /**
@@ -48,7 +45,6 @@ export default class LocalBusinessEnrichmentService {
       name: prospect.name,
       city: prospect.city,
       website: prospect.website,
-      facebookUrl: prospect.facebookUrl,
       phone: prospect.phone,
     }
 
@@ -101,8 +97,6 @@ export default class LocalBusinessEnrichmentService {
       email: LocalBusinessEnrichmentService.readString(item, ['email', 'emailAddress', 'email_address']),
       emailSource: LocalBusinessEnrichmentService.readString(item, ['emailSource', 'email_source']),
       phone: LocalBusinessEnrichmentService.readString(item, ['phone', 'telephone', 'phone_number']),
-      facebookUrl: LocalBusinessEnrichmentService.readString(item, ['facebookUrl', 'facebook_url', 'facebook']),
-      instagramUrl: LocalBusinessEnrichmentService.readString(item, ['instagramUrl', 'instagram_url', 'instagram']),
       seoScore: LocalBusinessEnrichmentService.readNumber(item, ['seoScore', 'seo_score', 'seo']),
       performanceScore: LocalBusinessEnrichmentService.readNumber(item, [
         'performanceScore',

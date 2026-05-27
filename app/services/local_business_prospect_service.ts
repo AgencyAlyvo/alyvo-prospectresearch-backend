@@ -6,6 +6,9 @@ import LocalBusinessProspectNotFoundException from '#exceptions/local_business_p
 import LocalBusinessProspectDuplicateException from '#exceptions/local_business_prospect_duplicate_exception'
 import ProspectActionService from '#services/prospect_action_service'
 import WeeklyObjectiveService from '#services/weekly_objective_service'
+import LocalBusinessImportEnrichmentService, {
+  type LocalBusinessImportEnrichmentResult,
+} from '#services/local_business_import_enrichment_service'
 import type { CreateLocalBusinessProspectPayload } from '#types/payload/local_business/create_local_business_prospect_payload'
 import type { UpdateLocalBusinessProspectPayload } from '#types/payload/local_business/update_local_business_prospect_payload'
 import type { ListLocalBusinessProspectsQuery } from '#types/payload/local_business/list_local_business_prospects_query'
@@ -18,6 +21,18 @@ import { ProspectChannel } from '#enums/prospect_channel'
 import { ProspectableType } from '#enums/prospectable_type'
 import type { ModelAttributes } from '@adonisjs/lucid/types/model'
 import type { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+
+/**
+ * Resultat agrege d'un import en masse depuis OSM.
+ * - inserted : nombre de lignes effectivement creees
+ * - skipped  : doublons (existant en base + doublons internes au payload) + echecs DB
+ * - enriched : nombre de lignes pour lesquelles au moins un champ provient de n8n
+ */
+export type BulkCreateFromOsmResult = {
+  inserted: number
+  skipped: number
+  enriched: number
+}
 
 /**
  * Page de resultats Lucid pour les business locaux (alias court).
@@ -176,8 +191,7 @@ export default class LocalBusinessProspectService {
       email: payload.email ?? null,
       emailSource: payload.emailSource ?? (payload.email ? 'manual' : null),
       website: payload.website ?? null,
-      facebookUrl: payload.facebookUrl ?? null,
-      instagramUrl: payload.instagramUrl ?? null,
+      pagesJaunesUrl: payload.pagesJaunesUrl ?? null,
       openingHours: payload.openingHours ?? null,
       contactChannel: payload.contactChannel ?? null,
       notes: payload.notes ?? null,
@@ -203,16 +217,24 @@ export default class LocalBusinessProspectService {
   /**
    * Cree en masse des business locaux issus d'un import OSM (apres preview).
    * Les doublons OSM sont ignores ; insertion par lots pour limiter la charge DB.
+   *
+   * Avant l'insertion, le lot est envoye au workflow n8n d'enrichissement a l'import :
+   * - verification HTTP 200 du site web OSM,
+   * - crawl pour email / telephone,
+   * - lookup Pages Jaunes pour site web / email / telephone manquants,
+   * - re-verification + crawl du site Pages Jaunes le cas echeant.
+   * Les champs n8n ecrasent les valeurs OSM (OSM = peu fiable). Si n8n est down ou
+   * non configure, on insere avec les donnees OSM brutes (mode degrade silencieux).
    * @param {CreateLocalBusinessProspectPayload[]} items - Items issus du preview OSM.
    * @param {User} user - Utilisateur authentifie.
-   * @returns {Promise<{ inserted: number; skipped: number }>} Statistiques d'import.
+   * @returns {Promise<BulkCreateFromOsmResult>} Statistiques d'import (inserted / skipped / enriched).
    */
   public static async bulkCreateFromOsm(
     items: CreateLocalBusinessProspectPayload[],
     user: User,
-  ): Promise<{ inserted: number; skipped: number }> {
+  ): Promise<BulkCreateFromOsmResult> {
     if (items.length === 0) {
-      return { inserted: 0, skipped: 0 }
+      return { inserted: 0, skipped: 0, enriched: 0 }
     }
 
     const existingRows: Pick<LocalBusinessProspect, 'osmType' | 'osmId'>[] = await LocalBusinessProspect.query()
@@ -246,15 +268,36 @@ export default class LocalBusinessProspectService {
       })
     }
 
+    // Enrichissement n8n du lot dedoublonne avant insertion (fallback OSM si echec).
+    const enrichments: LocalBusinessImportEnrichmentResult[] =
+      await LocalBusinessImportEnrichmentService.enrichBatch(toInsert)
+    const enrichmentByKey: Map<string, LocalBusinessImportEnrichmentResult> = new Map(
+      enrichments
+        .filter((e: LocalBusinessImportEnrichmentResult): boolean => Boolean(e.osmType && e.osmId))
+        .map((e: LocalBusinessImportEnrichmentResult): [string, LocalBusinessImportEnrichmentResult] => [
+          `${e.osmType}:${e.osmId}`,
+          e,
+        ]),
+    )
+
     let inserted: number = 0
+    let enriched: number = 0
     const BATCH_SIZE: number = 200
     const occurredAt: DateTime = DateTime.now()
 
     for (let offset: number = 0; offset < toInsert.length; offset += BATCH_SIZE) {
       const chunk: CreateLocalBusinessProspectPayload[] = toInsert.slice(offset, offset + BATCH_SIZE)
       const rows: Partial<ModelAttributes<LocalBusinessProspect>>[] = chunk.map(
-        (item: CreateLocalBusinessProspectPayload): Partial<ModelAttributes<LocalBusinessProspect>> =>
-          LocalBusinessProspectService.toOsmImportRow(item, user),
+        (item: CreateLocalBusinessProspectPayload): Partial<ModelAttributes<LocalBusinessProspect>> => {
+          const enrichment: LocalBusinessImportEnrichmentResult | undefined =
+            item.osmType && item.osmId ? enrichmentByKey.get(`${item.osmType}:${item.osmId}`) : undefined
+          const merged: { payload: CreateLocalBusinessProspectPayload; didEnrich: boolean } =
+            LocalBusinessProspectService.applyImportEnrichment(item, enrichment)
+          if (merged.didEnrich) {
+            enriched += 1
+          }
+          return LocalBusinessProspectService.toOsmImportRow(merged.payload, user, merged.didEnrich ? occurredAt : null)
+        },
       )
 
       try {
@@ -276,18 +319,60 @@ export default class LocalBusinessProspectService {
       }
     }
 
-    return { inserted, skipped }
+    return { inserted, skipped, enriched }
+  }
+
+  /**
+   * Applique le resultat d'enrichissement n8n a un payload OSM.
+   * On ne fait pas confiance a OSM : les valeurs n8n non-nulles ecrasent celles d'OSM.
+   * Les notes recoivent l'URL Pages Jaunes si fournie (pour aider l'utilisateur a verifier).
+   * @param {CreateLocalBusinessProspectPayload} item - Payload OSM brut.
+   * @param {LocalBusinessImportEnrichmentResult | undefined} enrichment - Resultat n8n correlé.
+   * @returns {{ payload: CreateLocalBusinessProspectPayload; didEnrich: boolean }} Payload mergé et flag.
+   */
+  private static applyImportEnrichment(
+    item: CreateLocalBusinessProspectPayload,
+    enrichment: LocalBusinessImportEnrichmentResult | undefined,
+  ): { payload: CreateLocalBusinessProspectPayload; didEnrich: boolean } {
+    if (!enrichment) {
+      return { payload: item, didEnrich: false }
+    }
+
+    const merged: CreateLocalBusinessProspectPayload = { ...item }
+    let didEnrich: boolean = false
+
+    if (enrichment.website && enrichment.website !== item.website) {
+      merged.website = enrichment.website
+      didEnrich = true
+    }
+    if (enrichment.email && enrichment.email !== item.email) {
+      merged.email = enrichment.email
+      merged.emailSource = enrichment.emailSource ?? LocalBusinessEmailSource.WEBSITE_SCRAPE
+      didEnrich = true
+    }
+    if (enrichment.phone && enrichment.phone !== item.phone) {
+      merged.phone = enrichment.phone
+      didEnrich = true
+    }
+    if (enrichment.pagesJaunesUrl && enrichment.pagesJaunesUrl !== item.pagesJaunesUrl) {
+      merged.pagesJaunesUrl = enrichment.pagesJaunesUrl
+      didEnrich = true
+    }
+
+    return { payload: merged, didEnrich }
   }
 
   /**
    * Mappe un payload OSM vers une ligne LocalBusinessProspect (import en masse).
-   * @param {CreateLocalBusinessProspectPayload} payload - Donnees validees.
+   * @param {CreateLocalBusinessProspectPayload} payload - Donnees validees (deja mergees avec n8n si applicable).
    * @param {User} user - Utilisateur proprietaire.
+   * @param {DateTime | null} enrichedAt - Date d'enrichissement n8n si au moins un champ a ete enrichi.
    * @returns {Partial<ModelAttributes<LocalBusinessProspect>>} Attributs pour createMany.
    */
   private static toOsmImportRow(
     payload: CreateLocalBusinessProspectPayload,
     user: User,
+    enrichedAt: DateTime | null = null,
   ): Partial<ModelAttributes<LocalBusinessProspect>> {
     return {
       userId: user.id,
@@ -307,8 +392,7 @@ export default class LocalBusinessProspectService {
       email: payload.email ?? null,
       emailSource: payload.emailSource ?? (payload.email ? LocalBusinessEmailSource.OSM : null),
       website: payload.website ?? null,
-      facebookUrl: payload.facebookUrl ?? null,
-      instagramUrl: payload.instagramUrl ?? null,
+      pagesJaunesUrl: payload.pagesJaunesUrl ?? null,
       openingHours: payload.openingHours ?? null,
       contactChannel: payload.contactChannel ?? null,
       notes: payload.notes ?? null,
@@ -319,6 +403,7 @@ export default class LocalBusinessProspectService {
       discoveryCallDone: false,
       salesCallDone: false,
       dealWon: false,
+      enrichedAt,
     }
   }
 

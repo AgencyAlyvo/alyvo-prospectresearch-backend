@@ -27,6 +27,5 @@ export type OsmSearchResult = {
   phone: string | null
   email: string | null
   website: string | null
-  facebookUrl: string | null
   openingHours: string | null
 }

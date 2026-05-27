@@ -183,7 +183,6 @@ export default class LocalBusinessImportService {
           email: item.email,
           emailSource: item.email ? 'osm' : null,
           website: item.website,
-          facebookUrl: item.facebookUrl,
           openingHours: item.openingHours,
           hasWebsite: Boolean(item.website && item.website.trim().length > 0),
           status: 'a_contacter',
@@ -300,7 +299,6 @@ export default class LocalBusinessImportService {
       phone: tags.phone || tags['contact:phone'] || null,
       email: normalizeImportEmail(tags.email || tags['contact:email'] || null),
       website: normalizeExternalUrl(tags.website || tags['contact:website'] || tags['contact:url'] || null),
-      facebookUrl: normalizeExternalUrl(tags['contact:facebook'] ?? null),
       openingHours: tags.opening_hours || null,
     }
   }

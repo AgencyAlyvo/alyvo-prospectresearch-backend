@@ -22,8 +22,7 @@ export type LocalBusinessProspectSummaryResponse = {
   email: string | null
   emailSource: string | null
   website: string | null
-  facebookUrl: string | null
-  instagramUrl: string | null
+  pagesJaunesUrl: string | null
   hasWebsite: boolean
   seoScore: number | null
   performanceScore: number | null

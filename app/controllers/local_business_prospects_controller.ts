@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import LocalBusinessProspectModel from '#models/local_business_prospect'
-import LocalBusinessProspectService from '#services/local_business_prospect_service'
+import LocalBusinessProspectService, { type BulkCreateFromOsmResult } from '#services/local_business_prospect_service'
 import LocalBusinessEnrichmentService, {
   type LocalBusinessEnrichmentResponse,
 } from '#services/local_business_enrichment_service'
@@ -188,8 +188,6 @@ export default class LocalBusinessProspectsController {
       ...(enrichment.email ? { email: enrichment.email } : {}),
       ...(enrichment.emailSource ? { emailSource: enrichment.emailSource as never } : {}),
       ...(enrichment.phone ? { phone: enrichment.phone } : {}),
-      ...(enrichment.facebookUrl ? { facebookUrl: enrichment.facebookUrl } : {}),
-      ...(enrichment.instagramUrl ? { instagramUrl: enrichment.instagramUrl } : {}),
       ...(enrichment.seoScore !== null && enrichment.seoScore !== undefined ? { seoScore: enrichment.seoScore } : {}),
       ...(enrichment.performanceScore !== null && enrichment.performanceScore !== undefined
         ? { performanceScore: enrichment.performanceScore }
@@ -257,7 +255,7 @@ export default class LocalBusinessProspectsController {
     const payload: BulkImportFromOsmPayload = (await request.validateUsing(
       bulkImportFromOsmValidator,
     )) as BulkImportFromOsmPayload
-    const stats: { inserted: number; skipped: number } = await LocalBusinessProspectService.bulkCreateFromOsm(
+    const stats: BulkCreateFromOsmResult = await LocalBusinessProspectService.bulkCreateFromOsm(
       payload.items.map((item: OsmSearchResult) => ({
         name: item.name,
         category: item.category,
@@ -274,7 +272,6 @@ export default class LocalBusinessProspectsController {
         phone: item.phone,
         email: normalizeImportEmail(item.email),
         website: normalizeExternalUrl(item.website),
-        facebookUrl: normalizeExternalUrl(item.facebookUrl),
         openingHours: item.openingHours,
       })),
       auth.user!,

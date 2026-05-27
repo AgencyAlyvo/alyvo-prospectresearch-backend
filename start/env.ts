@@ -34,6 +34,8 @@ export default await Env.create(new URL('../', import.meta.url), {
   N8N_LINKEDIN_ENRICHMENT_WEBHOOK_HEADER_SECRET: Env.schema.string(),
   N8N_LOCAL_BUSINESS_ENRICHMENT_WEBHOOK_URL: Env.schema.string.optional(),
   N8N_LOCAL_BUSINESS_ENRICHMENT_WEBHOOK_HEADER_SECRET: Env.schema.string.optional(),
+  N8N_LOCAL_BUSINESS_IMPORT_ENRICHMENT_WEBHOOK_URL: Env.schema.string.optional(),
+  N8N_LOCAL_BUSINESS_IMPORT_ENRICHMENT_WEBHOOK_HEADER_SECRET: Env.schema.string.optional(),
   PAGESPEED_INSIGHTS_API_KEY: Env.schema.string.optional(),
   OSM_PBF_FILE_PATH: Env.schema.string.optional(),
 })

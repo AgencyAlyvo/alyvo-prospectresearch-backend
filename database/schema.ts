@@ -140,7 +140,7 @@ export class LinkedinProspectSchema extends BaseModel {
 }
 
 export class LocalBusinessProspectSchema extends BaseModel {
-  static $columns = ['accessibilityScore', 'addedAtWeek', 'address', 'bestPracticesScore', 'category', 'city', 'contactChannel', 'country', 'createdAt', 'dealWon', 'discoveryCallAt', 'discoveryCallDone', 'email', 'emailSource', 'enrichedAt', 'facebookUrl', 'firstContactAt', 'hasWebsite', 'id', 'identifiedNeed', 'instagramUrl', 'isFavorite', 'latitude', 'lighthouseFetchedAt', 'longitude', 'lossReason', 'name', 'nextAction', 'nextActionAt', 'notes', 'openingHours', 'osmId', 'osmType', 'performanceScore', 'phone', 'positiveReply', 'postalCode', 'proposalAmount', 'proposalSentAt', 'region', 'relance1At', 'relance2At', 'relance3At', 'relancesCount', 'repliedAt', 'salesCallAt', 'salesCallDone', 'seoScore', 'signedAmount', 'signedAt', 'status', 'subcategory', 'updatedAt', 'userId', 'website'] as const
+  static $columns = ['accessibilityScore', 'addedAtWeek', 'address', 'bestPracticesScore', 'category', 'city', 'contactChannel', 'country', 'createdAt', 'dealWon', 'discoveryCallAt', 'discoveryCallDone', 'email', 'emailSource', 'enrichedAt', 'firstContactAt', 'hasWebsite', 'id', 'identifiedNeed', 'isFavorite', 'latitude', 'lighthouseFetchedAt', 'longitude', 'lossReason', 'name', 'nextAction', 'nextActionAt', 'notes', 'openingHours', 'osmId', 'osmType', 'pagesJaunesUrl', 'performanceScore', 'phone', 'positiveReply', 'postalCode', 'proposalAmount', 'proposalSentAt', 'region', 'relance1At', 'relance2At', 'relance3At', 'relancesCount', 'repliedAt', 'salesCallAt', 'salesCallDone', 'seoScore', 'signedAmount', 'signedAt', 'status', 'subcategory', 'updatedAt', 'userId', 'website'] as const
   $columns = LocalBusinessProspectSchema.$columns
   @column()
   declare accessibilityScore: number | null
@@ -172,8 +172,6 @@ export class LocalBusinessProspectSchema extends BaseModel {
   declare emailSource: string | null
   @column.dateTime()
   declare enrichedAt: DateTime | null
-  @column()
-  declare facebookUrl: string | null
   @column.dateTime()
   declare firstContactAt: DateTime | null
   @column()
@@ -182,8 +180,6 @@ export class LocalBusinessProspectSchema extends BaseModel {
   declare id: number
   @column()
   declare identifiedNeed: string | null
-  @column()
-  declare instagramUrl: string | null
   @column()
   declare isFavorite: boolean
   @column()
@@ -208,6 +204,8 @@ export class LocalBusinessProspectSchema extends BaseModel {
   declare osmId: string | null
   @column()
   declare osmType: string | null
+  @column()
+  declare pagesJaunesUrl: string | null
   @column()
   declare performanceScore: number | null
   @column()

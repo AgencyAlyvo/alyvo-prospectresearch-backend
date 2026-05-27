@@ -9,7 +9,7 @@ export const controllers = {
   LinkedinProspects: () => import('#controllers/linkedin_prospects_controller'),
   LinkedinStats: () => import('#controllers/linkedin_stats_controller'),
   LocalBusinessProspects: () => import('#controllers/local_business_prospects_controller'),
+  LocalBusinessStats: () => import('#controllers/local_business_stats_controller'),
   UserSettings: () => import('#controllers/user_settings_controller'),
   WeeklyObjectives: () => import('#controllers/weekly_objectives_controller'),
-  LocalBusinessStats: () => import('#controllers/local_business_stats_controller'),
 }
