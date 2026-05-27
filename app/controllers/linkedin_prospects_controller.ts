@@ -8,6 +8,8 @@ import {
   listLinkedinProspectsValidator,
   updateLinkedinProspectValidator,
 } from '#validators/linkedin/linkedin_prospect_validator'
+import { prospectBulkActionValidator } from '#validators/shared/prospect_bulk_action_validator'
+import type { ProspectBulkActionPayload, ProspectBulkActionResult } from '#types/payload/prospect_bulk_action_payload'
 import type { ProspectActionType } from '#enums/prospect_action_type'
 import type { CreateLinkedinProspectPayload } from '#types/payload/linkedin/create_linkedin_prospect_payload'
 import type { EnrichLinkedinProspectPayload } from '#types/payload/linkedin/enrich_linkedin_prospect_payload'
@@ -205,6 +207,23 @@ export default class LinkedinProspectsController {
   public async deleteLinkedinProspect({ params, auth, response }: HttpContext): Promise<void> {
     await LinkedinProspectService.deleteLinkedinProspect(Number(params.id), auth.user!)
     response.noContent()
+  }
+
+  /**
+   * Actions groupées sur une selection de prospects LinkedIn (favoris, suppression).
+   * @param {HttpContext} ctx - Contexte HTTP Adonis.
+   * @returns {Promise<unknown>} Nombre de lignes impactees.
+   */
+  public async bulkLinkedinProspectAction({ request, auth, serialize }: HttpContext): Promise<unknown> {
+    const payload: ProspectBulkActionPayload = (await request.validateUsing(
+      prospectBulkActionValidator,
+    )) as ProspectBulkActionPayload
+    const result: ProspectBulkActionResult = await LinkedinProspectService.bulkLinkedinProspectAction(
+      payload.ids,
+      payload.action,
+      auth.user!,
+    )
+    return serialize.withoutWrapping(result)
   }
 
   /**

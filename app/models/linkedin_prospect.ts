@@ -42,6 +42,7 @@ export default class LinkedinProspect extends LinkedinProspectSchema {
   @beforeSave()
   public static normalizeFlags(prospect: LinkedinProspect): void {
     prospect.positiveReply = Boolean(prospect.positiveReply)
+    prospect.isFavorite = Boolean(prospect.isFavorite)
     prospect.discoveryCallDone = Boolean(prospect.discoveryCallDone)
     prospect.salesCallDone = Boolean(prospect.salesCallDone)
     prospect.dealWon = Boolean(prospect.dealWon)

@@ -81,6 +81,7 @@ export const updateLinkedinProspectValidator = vine.compile(
     proposalAmount: vine.number().min(0).nullable().optional(),
     signedAmount: vine.number().min(0).nullable().optional(),
     lossReason: vine.string().trim().nullable().optional(),
+    isFavorite: vine.boolean().optional(),
   }),
 )
 
@@ -103,6 +104,7 @@ export const listLinkedinProspectsValidator = vine.compile(
     invitationAccepted: vine.boolean().optional(),
     replied: vine.boolean().optional(),
     hasEmail: vine.boolean().optional(),
+    isFavorite: vine.boolean().optional(),
     week: vine
       .string()
       .trim()

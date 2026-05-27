@@ -16,14 +16,15 @@ import WeeklyObjectiveService from '#services/weekly_objective_service'
 import type { CreateLinkedinProspectPayload } from '#types/payload/linkedin/create_linkedin_prospect_payload'
 import type { UpdateLinkedinProspectPayload } from '#types/payload/linkedin/update_linkedin_prospect_payload'
 import type { ListLinkedinProspectsQuery } from '#types/payload/linkedin/list_linkedin_prospects_query'
+import { parseQueryBoolean } from '#utils/parse_query_boolean'
 import { LinkedinProspectStatus } from '#enums/linkedin_prospect_status'
+import { ProspectBulkAction } from '#enums/prospect_bulk_action'
 import { ProspectActionType } from '#enums/prospect_action_type'
 import { ProspectChannel } from '#enums/prospect_channel'
 import { ProspectableType } from '#enums/prospectable_type'
 import { hasReachedLinkedinStatus } from '#constants/linkedin_status_order'
 import { getLinkedinRelancesCount } from '#utils/linkedin_relance_count'
-import type { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
-import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+import type { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 
 /**
  * Page de resultats Lucid pour les prospects LinkedIn (alias court).
@@ -115,6 +116,10 @@ export default class LinkedinProspectService {
     }
     if (query.week) {
       builder.where('added_at_week', query.week)
+    }
+    const favoritesOnly: boolean | undefined = parseQueryBoolean(query.isFavorite)
+    if (favoritesOnly !== undefined) {
+      builder.where('is_favorite', favoritesOnly)
     }
 
     builder.orderBy(LinkedinProspectService.snakeize(sortBy), sortDir)
@@ -344,6 +349,37 @@ export default class LinkedinProspectService {
       prospect.linkedinUrl,
     )
     return await LinkedinProspectService.updateLinkedinProspect(id, enrichment, user)
+  }
+
+  /**
+   * Applique une action groupée (favoris, suppression) sur plusieurs prospects LinkedIn.
+   * @param {number[]} ids - Identifiants cibles.
+   * @param {import('#enums/prospect_bulk_action').ProspectBulkAction} action - Action a executer.
+   * @param {User} user - Utilisateur authentifie.
+   * @returns {Promise<{ affected: number }>} Nombre de lignes impactees.
+   */
+  public static async bulkLinkedinProspectAction(
+    ids: number[],
+    action: ProspectBulkAction,
+    user: User,
+  ): Promise<{ affected: number }> {
+    const uniqueIds: number[] = [...new Set(ids)]
+    if (uniqueIds.length === 0) {
+      return { affected: 0 }
+    }
+
+    const baseQuery: ModelQueryBuilderContract<typeof LinkedinProspect, LinkedinProspect> = LinkedinProspect.query()
+      .where('user_id', user.id)
+      .whereIn('id', uniqueIds)
+
+    if (action === ProspectBulkAction.DELETE) {
+      const affected: number | number[] = await baseQuery.delete()
+      return { affected: Array.isArray(affected) ? affected.length : Number(affected) }
+    }
+
+    const isFavorite: boolean = action === ProspectBulkAction.FAVORITE
+    const affected: number | number[] = await baseQuery.update({ isFavorite })
+    return { affected: Array.isArray(affected) ? affected.length : Number(affected) }
   }
 
   /**

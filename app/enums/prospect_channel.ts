@@ -3,4 +3,8 @@
  */
 export enum ProspectChannel {
   LINKEDIN = 'linkedin',
+  EMAIL = 'email',
+  PHONE = 'phone',
+  WEBSITE_FORM = 'website_form',
+  FACEBOOK = 'facebook',
 }

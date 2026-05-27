@@ -33,7 +33,7 @@ export class AuthAccessTokenSchema extends BaseModel {
 }
 
 export class LinkedinProspectSchema extends BaseModel {
-  static $columns = ['addedAtWeek', 'city', 'company', 'companyDescription', 'companyEmployeeCountRange', 'companyLinkedinUrl', 'companyTagline', 'companyType', 'connectionsCount', 'country', 'createdAt', 'dealWon', 'discoveryCallAt', 'discoveryCallDone', 'email', 'firstName', 'followerCount', 'hiring', 'id', 'identifiedNeed', 'industry', 'invitationAcceptedAt', 'invitationSentAt', 'lastName', 'linkedinUrl', 'lossReason', 'message1SentAt', 'nextAction', 'nextActionAt', 'openToWork', 'phone', 'position', 'positiveReply', 'profileHeadline', 'proposalAmount', 'proposalSentAt', 'region', 'relance1At', 'relance2At', 'relance3At', 'relancesCount', 'repliedAt', 'salesCallAt', 'salesCallDone', 'signedAmount', 'signedAt', 'status', 'updatedAt', 'userId', 'websiteUrl'] as const
+  static $columns = ['addedAtWeek', 'city', 'company', 'companyDescription', 'companyEmployeeCountRange', 'companyLinkedinUrl', 'companyTagline', 'companyType', 'connectionsCount', 'country', 'createdAt', 'dealWon', 'discoveryCallAt', 'discoveryCallDone', 'email', 'firstName', 'followerCount', 'hiring', 'id', 'identifiedNeed', 'industry', 'invitationAcceptedAt', 'invitationSentAt', 'isFavorite', 'lastName', 'linkedinUrl', 'lossReason', 'message1SentAt', 'nextAction', 'nextActionAt', 'openToWork', 'phone', 'position', 'positiveReply', 'profileHeadline', 'proposalAmount', 'proposalSentAt', 'region', 'relance1At', 'relance2At', 'relance3At', 'relancesCount', 'repliedAt', 'salesCallAt', 'salesCallDone', 'signedAmount', 'signedAt', 'status', 'updatedAt', 'userId', 'websiteUrl'] as const
   $columns = LinkedinProspectSchema.$columns
   @column()
   declare addedAtWeek: string | null
@@ -81,6 +81,8 @@ export class LinkedinProspectSchema extends BaseModel {
   declare invitationAcceptedAt: DateTime | null
   @column.dateTime()
   declare invitationSentAt: DateTime | null
+  @column()
+  declare isFavorite: boolean
   @column()
   declare lastName: string
   @column()
@@ -135,6 +137,121 @@ export class LinkedinProspectSchema extends BaseModel {
   declare userId: number
   @column()
   declare websiteUrl: string | null
+}
+
+export class LocalBusinessProspectSchema extends BaseModel {
+  static $columns = ['accessibilityScore', 'addedAtWeek', 'address', 'bestPracticesScore', 'category', 'city', 'contactChannel', 'country', 'createdAt', 'dealWon', 'discoveryCallAt', 'discoveryCallDone', 'email', 'emailSource', 'enrichedAt', 'facebookUrl', 'firstContactAt', 'hasWebsite', 'id', 'identifiedNeed', 'instagramUrl', 'isFavorite', 'latitude', 'lighthouseFetchedAt', 'longitude', 'lossReason', 'name', 'nextAction', 'nextActionAt', 'notes', 'openingHours', 'osmId', 'osmType', 'performanceScore', 'phone', 'positiveReply', 'postalCode', 'proposalAmount', 'proposalSentAt', 'region', 'relance1At', 'relance2At', 'relance3At', 'relancesCount', 'repliedAt', 'salesCallAt', 'salesCallDone', 'seoScore', 'signedAmount', 'signedAt', 'status', 'subcategory', 'updatedAt', 'userId', 'website'] as const
+  $columns = LocalBusinessProspectSchema.$columns
+  @column()
+  declare accessibilityScore: number | null
+  @column()
+  declare addedAtWeek: string | null
+  @column()
+  declare address: string | null
+  @column()
+  declare bestPracticesScore: number | null
+  @column()
+  declare category: string | null
+  @column()
+  declare city: string | null
+  @column()
+  declare contactChannel: string | null
+  @column()
+  declare country: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare dealWon: boolean
+  @column.dateTime()
+  declare discoveryCallAt: DateTime | null
+  @column()
+  declare discoveryCallDone: boolean
+  @column()
+  declare email: string | null
+  @column()
+  declare emailSource: string | null
+  @column.dateTime()
+  declare enrichedAt: DateTime | null
+  @column()
+  declare facebookUrl: string | null
+  @column.dateTime()
+  declare firstContactAt: DateTime | null
+  @column()
+  declare hasWebsite: boolean
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare identifiedNeed: string | null
+  @column()
+  declare instagramUrl: string | null
+  @column()
+  declare isFavorite: boolean
+  @column()
+  declare latitude: string | null
+  @column.dateTime()
+  declare lighthouseFetchedAt: DateTime | null
+  @column()
+  declare longitude: string | null
+  @column()
+  declare lossReason: string | null
+  @column()
+  declare name: string
+  @column()
+  declare nextAction: string | null
+  @column.date()
+  declare nextActionAt: DateTime | null
+  @column()
+  declare notes: string | null
+  @column()
+  declare openingHours: string | null
+  @column()
+  declare osmId: string | null
+  @column()
+  declare osmType: string | null
+  @column()
+  declare performanceScore: number | null
+  @column()
+  declare phone: string | null
+  @column()
+  declare positiveReply: boolean
+  @column()
+  declare postalCode: string | null
+  @column()
+  declare proposalAmount: string | null
+  @column.dateTime()
+  declare proposalSentAt: DateTime | null
+  @column()
+  declare region: string | null
+  @column.dateTime()
+  declare relance1At: DateTime | null
+  @column.dateTime()
+  declare relance2At: DateTime | null
+  @column.dateTime()
+  declare relance3At: DateTime | null
+  @column()
+  declare relancesCount: number
+  @column.dateTime()
+  declare repliedAt: DateTime | null
+  @column.dateTime()
+  declare salesCallAt: DateTime | null
+  @column()
+  declare salesCallDone: boolean
+  @column()
+  declare seoScore: number | null
+  @column()
+  declare signedAmount: string | null
+  @column.dateTime()
+  declare signedAt: DateTime | null
+  @column()
+  declare status: string
+  @column()
+  declare subcategory: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+  @column()
+  declare website: string | null
 }
 
 export class ProspectActionSchema extends BaseModel {

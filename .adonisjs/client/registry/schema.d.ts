@@ -103,6 +103,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['enrichLinkedinProspect']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'linkedin_prospects.bulk_linkedin_prospect_action': {
+    methods: ["POST"]
+    pattern: '/linkedin-prospects/bulk-actions'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/shared/prospect_bulk_action_validator').prospectBulkActionValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/shared/prospect_bulk_action_validator').prospectBulkActionValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['bulkLinkedinProspectAction']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/linkedin_prospects_controller').default['bulkLinkedinProspectAction']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'linkedin_prospects.get_linkedin_prospect': {
     methods: ["GET","HEAD"]
     pattern: '/linkedin-prospects/:id'
@@ -221,6 +233,138 @@ export interface Registry {
       query: ExtractQuery<InferInput<(typeof import('#validators/settings/user_settings_validator').updateUserSettingsValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/user_settings_controller').default['updateUserSettings']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/user_settings_controller').default['updateUserSettings']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'local_business_prospects.list_local_business_prospects': {
+    methods: ["GET","HEAD"]
+    pattern: '/local-businesses'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: ExtractQueryForGet<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').listLocalBusinessProspectsValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['listLocalBusinessProspects']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['listLocalBusinessProspects']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'local_business_prospects.list_weekly_local_business_prospects': {
+    methods: ["GET","HEAD"]
+    pattern: '/local-businesses/weekly'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['listWeeklyLocalBusinessProspects']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['listWeeklyLocalBusinessProspects']>>>
+    }
+  }
+  'local_business_prospects.search_osm_by_city': {
+    methods: ["POST"]
+    pattern: '/local-businesses/search-osm'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').searchOsmValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').searchOsmValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['searchOsmByCity']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['searchOsmByCity']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'local_business_prospects.bulk_import_from_osm': {
+    methods: ["POST"]
+    pattern: '/local-businesses/bulk-import'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').bulkImportFromOsmValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').bulkImportFromOsmValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['bulkImportFromOsm']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['bulkImportFromOsm']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'local_business_prospects.bulk_local_business_prospect_action': {
+    methods: ["POST"]
+    pattern: '/local-businesses/bulk-actions'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/shared/prospect_bulk_action_validator').prospectBulkActionValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/shared/prospect_bulk_action_validator').prospectBulkActionValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['bulkLocalBusinessProspectAction']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['bulkLocalBusinessProspectAction']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'local_business_prospects.get_local_business_prospect': {
+    methods: ["GET","HEAD"]
+    pattern: '/local-businesses/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['getLocalBusinessProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['getLocalBusinessProspect']>>>
+    }
+  }
+  'local_business_prospects.create_local_business_prospect': {
+    methods: ["POST"]
+    pattern: '/local-businesses'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').createLocalBusinessProspectValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').createLocalBusinessProspectValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['createLocalBusinessProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['createLocalBusinessProspect']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'local_business_prospects.update_local_business_prospect': {
+    methods: ["PATCH"]
+    pattern: '/local-businesses/:id'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').updateLocalBusinessProspectValidator)>>
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/local_business/local_business_prospect_validator').updateLocalBusinessProspectValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['updateLocalBusinessProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['updateLocalBusinessProspect']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'local_business_prospects.enrich_local_business_prospect': {
+    methods: ["POST"]
+    pattern: '/local-businesses/:id/enrich'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['enrichLocalBusinessProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['enrichLocalBusinessProspect']>>>
+    }
+  }
+  'local_business_prospects.delete_local_business_prospect': {
+    methods: ["DELETE"]
+    pattern: '/local-businesses/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['deleteLocalBusinessProspect']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['deleteLocalBusinessProspect']>>>
+    }
+  }
+  'local_business_prospects.mark_local_business_prospect_action': {
+    methods: ["POST"]
+    pattern: '/local-businesses/:id/actions/:action_type'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { id: ParamValue; action_type: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['markLocalBusinessProspectAction']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['markLocalBusinessProspectAction']>>>
     }
   }
 }

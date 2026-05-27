@@ -17,4 +17,5 @@ export type UpdateLinkedinProspectPayload = Partial<CreateLinkedinProspectPayloa
   proposalAmount?: number | null
   signedAmount?: number | null
   lossReason?: string | null
+  isFavorite?: boolean
 }

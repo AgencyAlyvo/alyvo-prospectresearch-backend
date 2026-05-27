@@ -52,6 +52,7 @@ export default class LinkedinProspectTransformer extends BaseTransformer<Linkedi
       email: this.resource.email,
       phone: this.resource.phone,
       status: this.resource.status as LinkedinProspectStatus,
+      isFavorite: Boolean(this.resource.isFavorite),
       invitationSentAt: this.resource.invitationSentAt ? this.resource.invitationSentAt.toISO() : null,
       invitationAcceptedAt: this.resource.invitationAcceptedAt ? this.resource.invitationAcceptedAt.toISO() : null,
       message1SentAt: this.resource.message1SentAt ? this.resource.message1SentAt.toISO() : null,

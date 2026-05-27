@@ -22,6 +22,7 @@ export type ListLinkedinProspectsQuery = {
   invitationAccepted?: boolean
   replied?: boolean
   hasEmail?: boolean
+  isFavorite?: boolean
   week?: string
   sortBy?: LinkedinProspectsSortField
   sortDir?: 'asc' | 'desc'

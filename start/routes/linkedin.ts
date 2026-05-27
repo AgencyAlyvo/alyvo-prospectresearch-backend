@@ -19,6 +19,7 @@ router
     router.get('/linkedin-prospects/weekly', [LinkedinProspectsController, 'listWeeklyLinkedinProspects'])
     router.get('/linkedin-prospects/due-relances', [LinkedinProspectsController, 'listDueLinkedinRelances'])
     router.post('/linkedin-prospects/enrich', [LinkedinProspectsController, 'enrichLinkedinProspect'])
+    router.post('/linkedin-prospects/bulk-actions', [LinkedinProspectsController, 'bulkLinkedinProspectAction'])
     router.get('/linkedin-prospects/:id', [LinkedinProspectsController, 'getLinkedinProspect'])
     router.post('/linkedin-prospects', [LinkedinProspectsController, 'createLinkedinProspect'])
     router.patch('/linkedin-prospects/:id', [LinkedinProspectsController, 'updateLinkedinProspect'])
