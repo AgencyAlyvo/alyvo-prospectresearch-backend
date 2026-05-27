@@ -11,4 +11,5 @@ export const controllers = {
   LocalBusinessProspects: () => import('#controllers/local_business_prospects_controller'),
   UserSettings: () => import('#controllers/user_settings_controller'),
   WeeklyObjectives: () => import('#controllers/weekly_objectives_controller'),
+  LocalBusinessStats: () => import('#controllers/local_business_stats_controller'),
 }

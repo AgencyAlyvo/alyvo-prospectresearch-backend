@@ -186,6 +186,12 @@ const routes = {
     tokens: [{"old":"/local-businesses/:id/actions/:action_type","type":0,"val":"local-businesses","end":""},{"old":"/local-businesses/:id/actions/:action_type","type":1,"val":"id","end":""},{"old":"/local-businesses/:id/actions/:action_type","type":0,"val":"actions","end":""},{"old":"/local-businesses/:id/actions/:action_type","type":1,"val":"action_type","end":""}],
     types: placeholder as Registry['local_business_prospects.mark_local_business_prospect_action']['types'],
   },
+  'local_business_stats.get_local_business_stats': {
+    methods: ["GET","HEAD"],
+    pattern: '/stats/local-business',
+    tokens: [{"old":"/stats/local-business","type":0,"val":"stats","end":""},{"old":"/stats/local-business","type":0,"val":"local-business","end":""}],
+    types: placeholder as Registry['local_business_stats.get_local_business_stats']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

@@ -2,6 +2,7 @@ import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 
 const LocalBusinessProspectsController = () => import('#controllers/local_business_prospects_controller')
+const LocalBusinessStatsController = () => import('#controllers/local_business_stats_controller')
 
 /**
  * Routes des business locaux (parallele du canal LinkedIn).
@@ -24,5 +25,8 @@ router
       LocalBusinessProspectsController,
       'markLocalBusinessProspectAction',
     ])
+
+    // Statistiques business locaux (parallele de /stats/linkedin).
+    router.get('/stats/local-business', [LocalBusinessStatsController, 'getLocalBusinessStats'])
   })
   .use(middleware.auth({ guards: ['api'] }))

@@ -34,6 +34,7 @@ export type ScannedRoutes = {
     'local_business_prospects.enrich_local_business_prospect': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'local_business_prospects.delete_local_business_prospect': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'local_business_prospects.mark_local_business_prospect_action': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'action_type': ParamValue} }
+    'local_business_stats.get_local_business_stats': { paramsTuple?: []; params?: {} }
   }
   GET: {
     'health': { paramsTuple?: []; params?: {} }
@@ -47,6 +48,7 @@ export type ScannedRoutes = {
     'local_business_prospects.list_local_business_prospects': { paramsTuple?: []; params?: {} }
     'local_business_prospects.list_weekly_local_business_prospects': { paramsTuple?: []; params?: {} }
     'local_business_prospects.get_local_business_prospect': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'local_business_stats.get_local_business_stats': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'health': { paramsTuple?: []; params?: {} }
@@ -60,6 +62,7 @@ export type ScannedRoutes = {
     'local_business_prospects.list_local_business_prospects': { paramsTuple?: []; params?: {} }
     'local_business_prospects.list_weekly_local_business_prospects': { paramsTuple?: []; params?: {} }
     'local_business_prospects.get_local_business_prospect': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'local_business_stats.get_local_business_stats': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'auth.sign_in': { paramsTuple?: []; params?: {} }

@@ -44,4 +44,7 @@ export interface ApiDefinition {
     deleteLocalBusinessProspect: typeof routes['local_business_prospects.delete_local_business_prospect']
     markLocalBusinessProspectAction: typeof routes['local_business_prospects.mark_local_business_prospect_action']
   }
+  localBusinessStats: {
+    getLocalBusinessStats: typeof routes['local_business_stats.get_local_business_stats']
+  }
 }

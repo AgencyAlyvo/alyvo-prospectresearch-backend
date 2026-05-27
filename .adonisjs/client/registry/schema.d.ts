@@ -367,4 +367,16 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_prospects_controller').default['markLocalBusinessProspectAction']>>>
     }
   }
+  'local_business_stats.get_local_business_stats': {
+    methods: ["GET","HEAD"]
+    pattern: '/stats/local-business'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: ExtractQueryForGet<InferInput<(typeof import('#validators/stats/local_business_stats_validator').localBusinessStatsValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/local_business_stats_controller').default['getLocalBusinessStats']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/local_business_stats_controller').default['getLocalBusinessStats']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
 }
