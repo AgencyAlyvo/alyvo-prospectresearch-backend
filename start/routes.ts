@@ -5,11 +5,13 @@ import router from '@adonisjs/core/services/router'
  */
 import './routes/swagger.js'
 import './routes/health.js'
+import './routes/auth.js'
 
 /**
  * Routes métiers
  */
-// .. import './routes/xxx.js'
+import './routes/linkedin.js'
+import './routes/software.js'
 
 /**
  * Cette route est utilisée pour tester le fonctionnement de base de l'application.

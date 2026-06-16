@@ -1,7 +1,7 @@
 services:
-  alovy_starterkit_backend_adonisjs:
-    container_name: alovy_starterkit_backend_adonisjs
-    image: alovy/starterkit-backend:develop
+  alovy_prospectresearch_backend_adonisjs:
+    container_name: alovy_prospectresearch_backend_adonisjs
+    image: alovy/prospectresearch-backend:develop
     restart: always
     build:
       context: .
@@ -13,9 +13,9 @@ services:
       - .:/app
       - node_modules:/app/node_modules
     ports:
-      - '3500:3500'
+      - '3501:3500'
     depends_on:
-      alovy_starterkit_database_mariadb:
+      alovy_prospectresearch_database_postgresql:
         condition: service_healthy
     healthcheck:
       test:
@@ -30,21 +30,20 @@ services:
     networks:
       - app-network
 
-  alovy_starterkit_database_mariadb:
-    container_name: alovy_starterkit_database_mariadb
-    image: mariadb:latest
+  alovy_prospectresearch_database_postgresql:
+    container_name: alovy_prospectresearch_database_postgresql
+    image: postgres:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: alovy_starterkit_develop
-      MYSQL_USER: testuser
-      MYSQL_PASSWORD: testpassword
+      POSTGRES_DB: alovy_prospectresearch_develop
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpassword
     ports:
-      - '3307:3306'
+      - '5434:5432'
     volumes:
-      - database_data:/var/lib/mysql
+      - database_data:/var/lib/postgresql
     healthcheck:
-      test: ['CMD', '/usr/local/bin/healthcheck.sh', '--innodb_initialized']
+      test: ['CMD-SHELL', 'pg_isready -U testuser -d alovy_prospectresearch_develop']
       start_period: 5s
       interval: 5s
       timeout: 5s
@@ -52,18 +51,20 @@ services:
     networks:
       - app-network
 
-  phpmyadmin_alovy_starterkit:
-    container_name: phpmyadmin_alovy_starterkit
-    image: phpmyadmin/phpmyadmin
+  pgadmin_alovy_prospectresearch:
+    container_name: pgadmin_alovy_prospectresearch
+    image: dpage/pgadmin4:latest
     restart: always
     environment:
-      PMA_HOST: alovy_starterkit_database_mariadb
-      PMA_USER: root
-      PMA_PASSWORD: root
+      PGADMIN_DEFAULT_EMAIL: admin@alovy.fr
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_REPLACE_SERVERS_ON_STARTUP: 'True'
     ports:
-      - '7090:80'
+      - '7091:80'
+    volumes:
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
     depends_on:
-      alovy_starterkit_database_mariadb:
+      alovy_prospectresearch_database_postgresql:
         condition: service_healthy
     networks:
       - app-network

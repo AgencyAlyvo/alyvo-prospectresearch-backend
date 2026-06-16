@@ -1,15 +1,22 @@
-# Alyvo - StarterKit - Backend
+# Alyvo ProspectResearch - Backend
 
-## 🛠 Tech Stack
+## Cursor Rules
 
-- TypeScript (Language)
-- Adonis (Framework)
-- CI / CD (Github Actions)
-- Docker / DockerCompose (Develop)
-- Kubernetes (Development-remote, Staging and Production)
-- Unit / Functional Tests (Japa)
-- Redis (Database)
-- MariaDB (Memory database)
+For AI-assisted work, use the project rules stored in:
+
+- .cursor/rules/backend
+
+## Tech Stack
+
+- TypeScript ESM
+- AdonisJS 7
+- Lucid ORM
+- VineJS validation
+- PostgreSQL
+- Japa tests
+- Docker / Docker Compose for development
+- Kubernetes for staging and production
+- GitHub Actions and release-please
 
 <br /><br />
 
@@ -17,10 +24,10 @@
 
 <br /><br />
 
-## 📚 API WebSite
+## API
 
-- Production : https://api.seatyrants.com
-- Staging : https://staging.api.seatyrants.com
+- Production : https://api.prospectresearch.alyvo.fr
+- Staging : https://staging.api.prospectresearch.alyvo.fr
 
 <br /><br />
 
@@ -56,7 +63,7 @@ git commit --allow-empty -m "chore: release 1.1.0-rc.0" -m "Release-As: 1.1.0-rc
 1. Clone the project repository using the following commands :
 
 ```bash
-git clone git@github.com:CrzGames/SeaTyrants_WebSite_BackEnd.git
+git clone git@github.com:AgencyAlyvo/alyvo-prospectresearch-backend.git
 ```
 
 2. Steps by Platform :
@@ -84,19 +91,15 @@ git clone git@github.com:CrzGames/SeaTyrants_WebSite_BackEnd.git
 
 <br /><br />
 
-## 🔄 Cycle Development
+## Cycle Development
 
 1. Open Docker Desktop
 2. Run command :
 
 ```bash
    # Start the development server on http://localhost:3500 (AdonisJS)
-   # Start the development server on http://localhost:7090 (phpmyadmin)
-   # Start the development server on http://localhost:5540 (redisinsight)
-   # Start the development server on http://localhost:4222 (nats - tcp)
-   # Start the development server on http://localhost:4223 (nats - websocket)
-   # Start Redis port is : 6379
-   # Start MariaDB port is : 3307
+   # Start pgAdmin on http://localhost:7090
+   # Start PostgreSQL on localhost:5433
    npm install # just for the idea
    npm run dev:docker
 ```

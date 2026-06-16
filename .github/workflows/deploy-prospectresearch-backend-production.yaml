@@ -1,0 +1,117 @@
+name: deploy_prospectresearch_backend_production
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+env:
+  VPS_HOST: ${{ secrets.VPS_HOST }}
+  VPS_USER: ${{ secrets.VPS_USER }}
+  VPS_PASSWORD: ${{ secrets.VPS_PASSWORD }}
+
+  DOMAIN_NAME: api.prospectresearch.alyvo.fr
+  CERTBOT_EMAIL: ${{ secrets.CERTBOT_EMAIL }}
+
+  APP_NAME: alyvo-prospectresearch-backend-production
+  APP_DIR: /var/www/alyvo-prospectresearch-backend-production
+  APP_PORT: '3503'
+  BACKEND_IMAGE: corentin35/alyvo-prospectresearch-backend:latest
+
+jobs:
+  deploy_production:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Decode .env.keys file
+        run: |
+          echo "${{ secrets.ENCRYPTED_ENV_KEYS_ADONISJS }}" | base64 --decode > .env.keys
+
+      - name: Get latest release tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v2
+
+      - name: Install Node.js and setup cache
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint TypeScript and ESLint
+        run: npm run lint:ts && npm run lint:eslint
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image - latest
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./docker/production/Dockerfile
+          push: true
+          tags: corentin35/alyvo-prospectresearch-backend:latest
+
+      - name: Build and push Docker image - version tag
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./docker/production/Dockerfile
+          push: true
+          tags: corentin35/alyvo-prospectresearch-backend:${{ steps.previoustag.outputs.tag }}
+
+      - name: Install Ansible and tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible sshpass jq
+
+      - name: Add VPS to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Create Ansible variables
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        run: |
+          jq -n \
+            --arg ansible_password "$VPS_PASSWORD" \
+            --arg ansible_become_password "$VPS_PASSWORD" \
+            --arg domain_name "$DOMAIN_NAME" \
+            --arg certbot_email "$CERTBOT_EMAIL" \
+            --arg app_name "$APP_NAME" \
+            --arg app_dir "$APP_DIR" \
+            --arg app_port "$APP_PORT" \
+            --arg backend_image "$BACKEND_IMAGE" \
+            --arg docker_hub_username "$DOCKER_HUB_USERNAME" \
+            --arg docker_hub_password "$DOCKER_HUB_ACCESS_TOKEN" \
+            '{
+              ansible_password: $ansible_password,
+              ansible_become_password: $ansible_become_password,
+              domain_name: $domain_name,
+              certbot_email: $certbot_email,
+              app_name: $app_name,
+              app_dir: $app_dir,
+              app_port: ($app_port | tonumber),
+              backend_image: $backend_image,
+              docker_hub_username: $docker_hub_username,
+              docker_hub_password: $docker_hub_password
+            }' > ansible/extra-vars-prospectresearch-backend.json
+
+      - name: Run Ansible deployment
+        run: |
+          ansible-playbook \
+            -i "$VPS_HOST," \
+            -u "$VPS_USER" \
+            --extra-vars "@ansible/extra-vars-prospectresearch-backend.json" \
+            ansible/playbook-prospectresearch-backend.yml
