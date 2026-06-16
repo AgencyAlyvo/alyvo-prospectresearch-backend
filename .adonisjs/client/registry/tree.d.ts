@@ -31,4 +31,8 @@ export interface ApiDefinition {
     getUserSettings: typeof routes['user_settings.get_user_settings']
     updateUserSettings: typeof routes['user_settings.update_user_settings']
   }
+  software: {
+    updaterManifest: typeof routes['software.updater_manifest']
+    download: typeof routes['software.download']
+  }
 }

@@ -2,16 +2,6 @@
 import { defineConfig } from '@adonisjs/cors'
 
 /**
- * Domaines frontend autorises en staging/production.
- */
-const allowedWebOrigins: string[] = [
-  'https://seatyrants.com',
-  'https://www.seatyrants.com',
-  'https://staging.seatyrants.com',
-  'https://dev.seatyrants.com',
-]
-
-/**
  * Configuration options to tweak the CORS policy. The following
  * options are documented on the official documentation website.
  *
@@ -28,7 +18,7 @@ const corsConfig = defineConfig({
    * In production, keep an explicit allowlist (empty by default, so no
    * cross-origin browser access is allowed until configured).
    */
-  origin: app.inDev ? true : allowedWebOrigins,
+  origin: app.inDev ? true : '*',
 
   /**
    * HTTP methods accepted for cross-origin requests.
