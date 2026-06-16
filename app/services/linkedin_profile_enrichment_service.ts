@@ -77,9 +77,11 @@ export default class LinkedinProfileEnrichmentService {
         method: 'POST',
         headers: LinkedinProfileEnrichmentService.buildHeaders(),
         body: JSON.stringify({ linkedinUrl }),
+        signal: AbortSignal.timeout(30_000),
       })
-    } catch {
-      throw new LinkedinProfileEnrichmentException('Impossible de joindre le webhook n8n')
+    } catch (error: unknown) {
+      const detail: string = error instanceof Error ? error.message : String(error)
+      throw new LinkedinProfileEnrichmentException(`Impossible de joindre le webhook n8n (${detail})`)
     }
 
     if (!response.ok) {

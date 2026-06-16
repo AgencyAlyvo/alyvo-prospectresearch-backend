@@ -8,8 +8,7 @@ export const controllers = {
   Health: () => import('#controllers/health_controller'),
   LinkedinProspects: () => import('#controllers/linkedin_prospects_controller'),
   LinkedinStats: () => import('#controllers/linkedin_stats_controller'),
-  LocalBusinessProspects: () => import('#controllers/local_business_prospects_controller'),
-  LocalBusinessStats: () => import('#controllers/local_business_stats_controller'),
+  Software: () => import('#controllers/software_controller'),
   UserSettings: () => import('#controllers/user_settings_controller'),
   WeeklyObjectives: () => import('#controllers/weekly_objectives_controller'),
 }

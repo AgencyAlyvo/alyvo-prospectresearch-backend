@@ -4,5 +4,4 @@
  */
 export enum ProspectableType {
   LINKEDIN_PROSPECT = 'linkedin_prospect',
-  LOCAL_BUSINESS_PROSPECT = 'local_business_prospect',
 }

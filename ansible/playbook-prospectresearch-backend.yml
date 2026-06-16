@@ -1,0 +1,241 @@
+- name: Deploy Alyvo ProspectResearch backend with Docker Compose on VPS
+  hosts: all
+  become: true
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+    app_name: ''
+    app_dir: ''
+    app_port: 3500
+
+    domain_name: ''
+    certbot_email: ''
+
+    backend_image: ''
+
+    docker_hub_username: ''
+    docker_hub_password: ''
+
+  tasks:
+    - name: Check required variables
+      ansible.builtin.assert:
+        that:
+          - domain_name | length > 0
+          - certbot_email | length > 0
+          - app_name | length > 0
+          - app_dir | length > 0
+          - app_port | int > 0
+          - backend_image | length > 0
+          - docker_hub_username | length > 0
+          - docker_hub_password | length > 0
+        fail_msg: 'Missing required variables from GitHub Actions.'
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install required base packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - python3-apt
+          - nginx
+          - certbot
+          - python3-certbot-nginx
+          - cron
+        state: present
+
+    - name: Check supported operating system for Docker repository
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['distribution'] | lower in ['debian', 'ubuntu']
+        fail_msg: 'This playbook supports Debian and Ubuntu VPS targets.'
+
+    - name: Set Docker repository OS
+      ansible.builtin.set_fact:
+        docker_repo_os: "{{ ansible_facts['distribution'] | lower }}"
+
+    - name: Ensure apt keyrings directory exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Install Docker GPG key
+      ansible.builtin.shell: |
+        install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/{{ docker_repo_os }}/gpg \
+          -o /etc/apt/keyrings/docker.asc
+        chmod a+r /etc/apt/keyrings/docker.asc
+      args:
+        creates: /etc/apt/keyrings/docker.asc
+
+    - name: Add Docker apt repository
+      ansible.builtin.shell: |
+        echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ docker_repo_os }} \
+          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+          > /etc/apt/sources.list.d/docker.list
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Update apt cache after Docker repository
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install Docker Engine and Compose plugin
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Ensure Docker service is enabled and running
+      ansible.builtin.systemd:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Create application directory
+      ansible.builtin.file:
+        path: '{{ app_dir }}'
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Ensure logs directory exists
+      ansible.builtin.file:
+        path: '{{ app_dir }}/logs'
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Create Docker Compose file
+      ansible.builtin.template:
+        src: docker-compose.prospectresearch-backend.yml.j2
+        dest: '{{ app_dir }}/docker-compose.yml'
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Log in to Docker Hub on VPS
+      ansible.builtin.shell: |
+        echo "{{ docker_hub_password }}" | docker login -u "{{ docker_hub_username }}" --password-stdin
+      no_log: true
+      changed_when: false
+
+    - name: Pull backend Docker image
+      ansible.builtin.command: docker compose pull
+      args:
+        chdir: '{{ app_dir }}'
+
+    - name: Start or update backend with Docker Compose
+      ansible.builtin.command: docker compose up --force-recreate -d
+      args:
+        chdir: '{{ app_dir }}'
+
+    - name: Ensure Let's Encrypt webroot exists
+      ansible.builtin.file:
+        path: /var/www/html/.well-known/acme-challenge
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Remove default Nginx site if present
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Check if SSL certificate already exists
+      ansible.builtin.stat:
+        path: '/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem'
+      register: ssl_cert
+
+    - name: Create initial Nginx config
+      ansible.builtin.template:
+        src: nginx-prospectresearch-backend.conf.j2
+        dest: '/etc/nginx/sites-available/{{ app_name }}'
+        owner: root
+        group: root
+        mode: '0644'
+      vars:
+        ssl_enabled: '{{ ssl_cert.stat.exists }}'
+
+    - name: Enable Nginx site
+      ansible.builtin.file:
+        src: '/etc/nginx/sites-available/{{ app_name }}'
+        dest: '/etc/nginx/sites-enabled/{{ app_name }}'
+        state: link
+        force: true
+
+    - name: Ensure Nginx is enabled and running
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: started
+
+    - name: Test Nginx config before SSL
+      ansible.builtin.command: nginx -t
+      changed_when: false
+
+    - name: Reload Nginx before SSL
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+
+    - name: Generate SSL certificate if missing
+      ansible.builtin.command: >
+        certbot certonly
+        --webroot
+        -w /var/www/html
+        -d {{ domain_name }}
+        --non-interactive
+        --agree-tos
+        --email {{ certbot_email }}
+      args:
+        creates: '/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem'
+
+    - name: Create final HTTPS Nginx config
+      ansible.builtin.template:
+        src: nginx-prospectresearch-backend.conf.j2
+        dest: '/etc/nginx/sites-available/{{ app_name }}'
+        owner: root
+        group: root
+        mode: '0644'
+      vars:
+        ssl_enabled: true
+
+    - name: Enable cron
+      ansible.builtin.systemd:
+        name: cron
+        enabled: true
+        state: started
+
+    - name: Add Certbot renewal cron
+      ansible.builtin.cron:
+        name: certbot renew
+        user: root
+        minute: '0'
+        hour: '*/12'
+        job: "/usr/bin/certbot renew --quiet --deploy-hook '/usr/sbin/nginx -t && /bin/systemctl reload nginx'"
+
+    - name: Final Nginx test
+      ansible.builtin.command: nginx -t
+      changed_when: false
+
+    - name: Final Nginx reload
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded

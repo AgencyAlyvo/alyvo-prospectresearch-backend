@@ -18,8 +18,4 @@ export enum ProspectActionType {
   PROPOSAL_SENT = 'proposal_sent',
   PROPOSAL_ACCEPTED = 'proposal_accepted',
   PROPOSAL_REFUSED = 'proposal_refused',
-  // Actions specifiques aux business locaux.
-  PHONE_CALL = 'phone_call',
-  ENRICHED = 'enriched',
-  IMPORTED_FROM_OSM = 'imported_from_osm',
 }
