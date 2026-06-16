@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/AgencyAlyvo/alyvo-prospectresearch-backend/compare/v1.0.0...v1.0.1) (2026-06-16)
+
+
+### Bug Fixes
+
+* baba ([2124e5a](https://github.com/AgencyAlyvo/alyvo-prospectresearch-backend/commit/2124e5ac101234bf6909afb0ccef830162b377ee))
+
 ## 1.0.0 (2026-06-16)
 
 
