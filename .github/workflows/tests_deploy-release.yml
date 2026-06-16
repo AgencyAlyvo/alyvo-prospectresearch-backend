@@ -38,4 +38,4 @@ jobs:
           release-type: node
           target-branch: main
           config-file: 'release-please-config.json'
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.PAT_ALYVO }}
