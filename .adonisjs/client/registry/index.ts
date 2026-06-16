@@ -120,6 +120,18 @@ const routes = {
     tokens: [{"old":"/settings","type":0,"val":"settings","end":""}],
     types: placeholder as Registry['user_settings.update_user_settings']['types'],
   },
+  'software.updater_manifest': {
+    methods: ["GET","HEAD"],
+    pattern: '/software/updater/:target/:arch/:currentVersion',
+    tokens: [{"old":"/software/updater/:target/:arch/:currentVersion","type":0,"val":"software","end":""},{"old":"/software/updater/:target/:arch/:currentVersion","type":0,"val":"updater","end":""},{"old":"/software/updater/:target/:arch/:currentVersion","type":1,"val":"target","end":""},{"old":"/software/updater/:target/:arch/:currentVersion","type":1,"val":"arch","end":""},{"old":"/software/updater/:target/:arch/:currentVersion","type":1,"val":"currentVersion","end":""}],
+    types: placeholder as Registry['software.updater_manifest']['types'],
+  },
+  'software.download': {
+    methods: ["GET","HEAD"],
+    pattern: '/software/download/:nameBundle',
+    tokens: [{"old":"/software/download/:nameBundle","type":0,"val":"software","end":""},{"old":"/software/download/:nameBundle","type":0,"val":"download","end":""},{"old":"/software/download/:nameBundle","type":1,"val":"nameBundle","end":""}],
+    types: placeholder as Registry['software.download']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

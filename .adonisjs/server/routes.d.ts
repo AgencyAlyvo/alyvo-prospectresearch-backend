@@ -23,6 +23,8 @@ export type ScannedRoutes = {
     'weekly_objectives.get_current_weekly_objective': { paramsTuple?: []; params?: {} }
     'user_settings.get_user_settings': { paramsTuple?: []; params?: {} }
     'user_settings.update_user_settings': { paramsTuple?: []; params?: {} }
+    'software.updater_manifest': { paramsTuple: [ParamValue,ParamValue,ParamValue]; params: {'target': ParamValue,'arch': ParamValue,'currentVersion': ParamValue} }
+    'software.download': { paramsTuple: [ParamValue]; params: {'nameBundle': ParamValue} }
   }
   GET: {
     'health': { paramsTuple?: []; params?: {} }
@@ -33,6 +35,8 @@ export type ScannedRoutes = {
     'linkedin_stats.get_linkedin_stats': { paramsTuple?: []; params?: {} }
     'weekly_objectives.get_current_weekly_objective': { paramsTuple?: []; params?: {} }
     'user_settings.get_user_settings': { paramsTuple?: []; params?: {} }
+    'software.updater_manifest': { paramsTuple: [ParamValue,ParamValue,ParamValue]; params: {'target': ParamValue,'arch': ParamValue,'currentVersion': ParamValue} }
+    'software.download': { paramsTuple: [ParamValue]; params: {'nameBundle': ParamValue} }
   }
   HEAD: {
     'health': { paramsTuple?: []; params?: {} }
@@ -43,6 +47,8 @@ export type ScannedRoutes = {
     'linkedin_stats.get_linkedin_stats': { paramsTuple?: []; params?: {} }
     'weekly_objectives.get_current_weekly_objective': { paramsTuple?: []; params?: {} }
     'user_settings.get_user_settings': { paramsTuple?: []; params?: {} }
+    'software.updater_manifest': { paramsTuple: [ParamValue,ParamValue,ParamValue]; params: {'target': ParamValue,'arch': ParamValue,'currentVersion': ParamValue} }
+    'software.download': { paramsTuple: [ParamValue]; params: {'nameBundle': ParamValue} }
   }
   POST: {
     'auth.sign_in': { paramsTuple?: []; params?: {} }

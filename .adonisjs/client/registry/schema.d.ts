@@ -235,4 +235,28 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/user_settings_controller').default['updateUserSettings']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'software.updater_manifest': {
+    methods: ["GET","HEAD"]
+    pattern: '/software/updater/:target/:arch/:currentVersion'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue, ParamValue]
+      params: { target: ParamValue; arch: ParamValue; currentVersion: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/software_controller').default['updaterManifest']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/software_controller').default['updaterManifest']>>>
+    }
+  }
+  'software.download': {
+    methods: ["GET","HEAD"]
+    pattern: '/software/download/:nameBundle'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { nameBundle: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/software_controller').default['download']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/software_controller').default['download']>>>
+    }
+  }
 }
