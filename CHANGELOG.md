@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/AgencyAlyvo/alyvo-prospectresearch-backend/compare/v1.0.1...v1.0.2) (2026-06-16)
+
+
+### Bug Fixes
+
+* var env ([fde8abf](https://github.com/AgencyAlyvo/alyvo-prospectresearch-backend/commit/fde8abf198e59650d5cb1fb689a63943b1d8e810))
+
 ## [1.0.1](https://github.com/AgencyAlyvo/alyvo-prospectresearch-backend/compare/v1.0.0...v1.0.1) (2026-06-16)
 
 
